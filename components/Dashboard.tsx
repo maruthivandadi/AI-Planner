@@ -49,93 +49,74 @@ const Dashboard: React.FC<DashboardProps> = ({ plan, subjects, exams, onUpdatePl
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text("Sophos - AI Study Plan", 20, 20);
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "italic");
-    doc.text(`Recommendation: ${plan.recommendation}`, 20, 30, { maxWidth: 170 });
-    
-    let y = 50;
-    plan.dailySchedules.forEach((day, index) => {
-      if (y > 250) {
-        doc.addPage();
-        y = 20;
-      }
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(14);
-      doc.text(new Date(day.date).toLocaleDateString(), 20, y);
-      y += 10;
-      
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      day.tasks.forEach(task => {
-        if (y > 270) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(`• [${task.subject}] ${task.topic} - ${task.sessions} sessions (${task.bestTime})`, 25, y);
-        y += 7;
-      });
-      y += 10;
-    });
-    
-    doc.save("Sophos_Study_Plan.pdf");
+    doc.text("AURA - COGNITIVE BLUEPRINT", 20, 30);
+    doc.save(`Aura_Blueprint_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   return (
-    <div className="space-y-10 animate-fade-in pb-20">
+    <div className="space-y-20 animate-fade-in-up pb-32">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="glass-card p-8 rounded-[2.5rem] flex items-center space-x-5 border-white shadow-xl">
-          <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-accent">
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+        <div className="bg-white p-10 rounded-sm border border-black/[0.04] shadow-sm flex flex-col justify-between group overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-accent/5 rounded-full blur-2xl group-hover:bg-accent/10 transition-colors"></div>
+          <p className="text-[8px] font-black text-slate uppercase tracking-[0.5em] mb-4">Streak</p>
+          <p className="text-4xl font-light text-secondary">
+            {plan.streak} <span className="text-[10px] font-black text-accent uppercase tracking-widest">Cycles</span>
+          </p>
+        </div>
+        
+        <div className="bg-white p-10 rounded-sm border border-black/[0.04] shadow-sm flex flex-col justify-between">
+          <p className="text-[8px] font-black text-slate uppercase tracking-[0.5em] mb-4">Mastery</p>
+          <p className="text-4xl font-light text-secondary">
+            {getOverallProgress()}<span className="text-xs font-black text-accent ml-1 opacity-40">%</span>
+          </p>
+        </div>
+
+        <div className="md:col-span-2 bg-white p-10 rounded-sm border border-accent/20 shadow-sm flex flex-col justify-between relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-5 text-accent">
+             <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" /></svg>
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Streak</p>
-            <p className="text-2xl font-bold text-secondary">{plan.streak} Days</p>
+            <p className="text-[8px] font-black text-accent uppercase tracking-[0.5em] mb-4">The Architect's Decree</p>
+            <p className="text-xl font-serif italic text-secondary leading-relaxed font-light">"{plan.recommendation}"</p>
           </div>
-        </div>
-        <div className="glass-card p-8 rounded-[2.5rem] flex items-center space-x-5 border-white shadow-xl">
-          <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald">
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Done</p>
-            <p className="text-2xl font-bold text-secondary">{getOverallProgress()}%</p>
-          </div>
-        </div>
-        <div className="md:col-span-2 glass-card p-8 rounded-[2.5rem] flex items-center justify-between border-white shadow-xl">
-          <div className="pr-6">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AI Insight</p>
-            <p className="text-sm font-serif italic text-secondary mt-2 line-clamp-2">"{plan.recommendation}"</p>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <button onClick={handleTaskReschedule} className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-bold uppercase hover:bg-red-50 hover:text-red-500 transition-all">Resync</button>
-            <button onClick={exportToPDF} className="px-4 py-2 bg-accent text-white rounded-xl text-[10px] font-bold uppercase hover:bg-indigo-600 transition-all">Export PDF</button>
+          <div className="flex items-center space-x-6 mt-8">
+            <button onClick={handleTaskReschedule} className="text-[8px] font-black text-slate hover:text-accent uppercase tracking-[0.4em] transition-colors">Resync Logic</button>
+            <button onClick={exportToPDF} className="text-[8px] font-black text-accent hover:text-black uppercase tracking-[0.4em] transition-colors">Export Blueprint</button>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-10 items-start">
-        <div className="flex-grow w-full lg:w-0 space-y-8">
-          <div className="flex flex-col space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold text-secondary font-serif">Protocol</h2>
-              <div className="bg-slate-100 p-1.5 rounded-2xl flex">
-                <button onClick={() => setViewMode('daily')} className={`px-6 py-2 rounded-xl text-xs font-bold uppercase ${viewMode === 'daily' ? 'bg-white shadow-md text-secondary' : 'text-slate-400'}`}>Daily</button>
-                <button onClick={() => setViewMode('weekly')} className={`px-6 py-2 rounded-xl text-xs font-bold uppercase ${viewMode === 'weekly' ? 'bg-white shadow-md text-secondary' : 'text-slate-400'}`}>Weekly</button>
+      <div className="flex flex-col lg:flex-row gap-16 items-start">
+        <div className="flex-grow w-full lg:w-0 space-y-12">
+          <div className="space-y-10">
+            <div className="flex justify-between items-end border-b border-black/[0.04] pb-8">
+              <div>
+                 <h2 className="text-4xl font-serif text-secondary tracking-tight">Timeline</h2>
+                 <p className="text-[8px] font-black text-slate uppercase tracking-[0.5em] mt-3">Active Operational Cycle</p>
+              </div>
+              <div className="flex bg-black/[0.02] border border-black/5 p-1 rounded-sm">
+                <button onClick={() => setViewMode('daily')} className={`px-10 py-2.5 rounded-sm text-[8px] font-black uppercase tracking-luxury transition-all ${viewMode === 'daily' ? 'bg-accent text-white' : 'text-slate hover:text-secondary'}`}>Daily</button>
+                <button onClick={() => setViewMode('weekly')} className={`px-10 py-2.5 rounded-sm text-[8px] font-black uppercase tracking-luxury transition-all ${viewMode === 'weekly' ? 'bg-accent text-white' : 'text-slate hover:text-secondary'}`}>Weekly</button>
               </div>
             </div>
 
             {viewMode === 'daily' && (
-              <div className="flex items-center space-x-3 overflow-x-auto pb-4 -mx-2 px-2 scroll-hide">
+              <div className="flex items-center space-x-4 overflow-x-auto pb-8 scroll-hide">
                 {plan.dailySchedules.map((day, idx) => {
                   const d = new Date(day.date);
                   const active = activeDayIndex === idx;
                   return (
-                    <button key={day.date} onClick={() => setActiveDayIndex(idx)} className={`flex flex-col items-center min-w-[70px] py-4 rounded-[2rem] border-2 transition-all ${active ? 'bg-secondary border-secondary text-white shadow-xl' : 'bg-white border-slate-100 text-slate-400 hover:border-accent'}`}>
-                      <span className="text-[10px] font-bold uppercase opacity-60">{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-                      <span className="text-xl font-bold">{d.getDate()}</span>
+                    <button 
+                      key={day.date} 
+                      onClick={() => setActiveDayIndex(idx)} 
+                      className={`flex flex-col items-center min-w-[85px] py-8 border transition-all duration-500 rounded-sm ${
+                        active 
+                        ? 'bg-accent border-accent text-white shadow-xl -translate-y-1' 
+                        : 'bg-white border-black/10 text-slate hover:border-accent/40'
+                      }`}
+                    >
+                      <span className={`text-[7px] font-black uppercase tracking-[0.4em] mb-4 ${active ? 'opacity-60' : 'opacity-30'}`}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                      <span className="text-2xl font-light">{d.getDate()}</span>
                     </button>
                   );
                 })}
@@ -145,29 +126,63 @@ const Dashboard: React.FC<DashboardProps> = ({ plan, subjects, exams, onUpdatePl
 
           <div className="space-y-4">
             {activeDay?.tasks.map(task => (
-              <div key={task.id} className={`group flex items-center p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer ${activeTaskId === task.id ? 'bg-white border-accent shadow-2xl scale-[1.01]' : 'bg-white/60 border-slate-100'} ${task.status === 'completed' ? 'opacity-40' : ''}`} onClick={() => setActiveTaskId(task.id)}>
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mr-6 transition-all ${task.status === 'completed' ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-accent group-hover:text-white'}`}>
-                  {task.status === 'completed' ? <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg> : <span className="font-bold text-xs">{task.sessions}x</span>}
+              <div 
+                key={task.id} 
+                className={`group flex items-center p-10 border transition-all duration-1000 cursor-pointer rounded-sm ${
+                  activeTaskId === task.id ? 'bg-mutedBlue border-accent shadow-sm' : 'bg-white border-black/[0.04] hover:border-accent/30'
+                } ${task.status === 'completed' ? 'opacity-30 grayscale' : ''}`} 
+                onClick={() => setActiveTaskId(task.id)}
+              >
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-10 transition-all duration-700 border ${
+                  task.status === 'completed' ? 'bg-accent/10 border-accent/20 text-accent' : 'bg-black/[0.02] border-black/5 text-slate group-hover:border-accent group-hover:text-accent'
+                }`}>
+                  {task.status === 'completed' ? <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg> : <span className="text-[10px] font-black">{task.sessions}</span>}
                 </div>
                 <div className="flex-grow">
-                  <span className="text-[10px] font-bold uppercase text-accent/70">{task.subject}</span>
-                  <h4 className="font-bold text-secondary text-xl font-serif">{task.topic}</h4>
+                  <div className="flex items-center space-x-4 mb-2">
+                    <span className="text-[8px] font-black uppercase tracking-[0.4em] text-accent">{task.subject}</span>
+                    <span className="w-1 h-1 bg-black/10 rounded-full"></span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.2em] text-slate/50">{task.bestTime} Focus</span>
+                  </div>
+                  <h4 className="font-serif text-2xl text-secondary tracking-tight font-light">{task.topic}</h4>
                 </div>
-                <button onClick={(e) => { e.stopPropagation(); toggleTaskStatus(task.id, 'completed'); }} className="opacity-0 group-hover:opacity-100 px-4 py-2 bg-emerald-500 text-white rounded-xl font-bold text-[10px] uppercase transition-all">Done</button>
+                <div className="opacity-0 group-hover:opacity-100 transition-all duration-700 ml-8">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); toggleTaskStatus(task.id, 'completed'); }} 
+                    className="px-8 py-3 bg-accent text-white text-[8px] font-black uppercase tracking-[0.3em] transition-all hover:bg-black"
+                  >
+                    Seal Task
+                  </button>
+                </div>
               </div>
             ))}
+            {activeDay?.tasks.length === 0 && (
+              <div className="py-24 text-center border border-dashed border-black/[0.08] rounded-sm">
+                <p className="text-slate/40 font-serif italic text-xl font-light">A period of cognitive stillness.</p>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="w-full lg:w-96 space-y-8 sticky top-24">
-          <FocusTimer initialMinutes={activeTask?.sessions ? 25 : 25} taskTitle={activeTask?.topic || 'Select a session'} onComplete={() => activeTask && toggleTaskStatus(activeTask.id, 'completed')} />
-          <div className="glass-card p-10 rounded-[3rem] border-white shadow-xl">
-            <h3 className="text-xs font-bold text-secondary uppercase tracking-widest mb-6">Upcoming Exams</h3>
-            <div className="space-y-4">
+        <div className="w-full lg:w-[400px] space-y-12 lg:sticky lg:top-36">
+          <FocusTimer 
+            initialMinutes={activeTask?.sessions ? 25 : 25} 
+            taskTitle={activeTask?.topic || 'Select a Focus Unit'} 
+            onComplete={() => activeTask && toggleTaskStatus(activeTask.id, 'completed')} 
+          />
+          
+          <div className="bg-white p-10 rounded-sm border border-black/[0.04] shadow-sm relative">
+            <h3 className="text-[8px] font-black text-secondary uppercase tracking-[0.6em] mb-10 opacity-30">Imminent Criticals</h3>
+            <div className="space-y-8">
               {exams.map(e => (
-                <div key={e.id} className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-secondary">{e.subjectName}</span>
-                  <span className="text-slate-400">{e.date}</span>
+                <div key={e.id} className="group cursor-default relative pl-5 border-l border-black/10">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="font-bold text-secondary text-xs tracking-tight group-hover:text-accent transition-colors">{e.subjectName}</span>
+                    <span className="text-[9px] font-black text-accent tracking-tighter italic">
+                      T - {Math.max(0, Math.ceil((new Date(e.date).getTime() - new Date().getTime()) / (1000 * 3600 * 24)))}d
+                    </span>
+                  </div>
+                  <span className="text-[7px] font-black text-slate/40 uppercase tracking-[0.3em]">{formatDate(e.date)}</span>
                 </div>
               ))}
             </div>

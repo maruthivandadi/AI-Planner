@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Exam, Subject, Topic, Difficulty, UserPreferences, StudyStyle, Priority } from '../types';
+import { Exam, Subject, Topic, Difficulty, UserPreferences, Priority } from '../types';
 
 interface InputWizardProps {
   onComplete: (exams: Exam[], subjects: Subject[], prefs: UserPreferences) => void;
@@ -23,7 +23,6 @@ const InputWizard: React.FC<InputWizardProps> = ({ onComplete, onBack }) => {
   const [newPriority, setNewPriority] = useState<Priority>('medium');
   
   const [topicInputs, setTopicInputs] = useState<Record<string, string>>({});
-  const [newDifficulty, setNewDifficulty] = useState<Difficulty>('medium');
 
   const addSubjectAndExam = () => {
     if (!newSubject || !newExamDate) return;
@@ -47,7 +46,7 @@ const InputWizard: React.FC<InputWizardProps> = ({ onComplete, onBack }) => {
     const topic: Topic = {
       id: Math.random().toString(36).substr(2, 9),
       name: val,
-      difficulty: newDifficulty,
+      difficulty: 'medium',
       completed: false
     };
     setSubjects(subjects.map(s => s.id === subjectId ? { ...s, topics: [...s.topics, topic] } : s));
@@ -55,103 +54,125 @@ const InputWizard: React.FC<InputWizardProps> = ({ onComplete, onBack }) => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8">
-      <div className="mb-10 text-center">
-        <h2 className="text-4xl font-bold mb-4 text-secondary font-serif">The Blueprints</h2>
-        <div className="flex justify-center space-x-2">
+    <div className="max-w-4xl mx-auto py-10">
+      <div className="mb-20 text-center">
+        <h2 className="text-5xl font-serif text-secondary mb-8 italic tracking-tight">Onboarding</h2>
+        <div className="flex justify-center space-x-4 items-center">
           {[1, 2, 3].map(s => (
-            <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${step === s ? 'w-16 bg-accent' : 'w-6 bg-slate-200'}`} />
+            <React.Fragment key={s}>
+              <div className={`h-[1px] transition-all duration-1000 ${step === s ? 'w-20 bg-accent shadow-sm' : 'w-8 bg-black/[0.08]'}`} />
+              {s < 3 && <div className="w-1.5 h-1.5 bg-black/[0.1] rounded-full"></div>}
+            </React.Fragment>
           ))}
         </div>
       </div>
 
-      <div className="glass-card rounded-[3rem] p-10 shadow-2xl border-white bg-white/90 transition-all">
+      <div className="bg-white rounded-sm p-16 shadow-2xl border border-black/[0.04] relative">
         {step === 1 && (
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-secondary">Upcoming Missions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-600 uppercase">Subject Name</label>
+          <div className="space-y-12 animate-fade-in-up">
+            <div className="space-y-2">
+               <h3 className="text-3xl font-serif text-secondary italic font-light">Target Registry</h3>
+               <p className="text-slate text-[9px] uppercase tracking-luxury opacity-50">Specify the terminal subjects and critical deadlines.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="space-y-3">
+                <label className="text-[8px] font-black text-slate uppercase tracking-[0.4em] ml-1">Subject Nomenclature</label>
                 <input 
-                  className="w-full bg-white border-2 border-slate-300 rounded-2xl p-4 text-secondary focus:border-accent outline-none"
-                  placeholder="e.g. Advanced Calculus"
+                  className="w-full bg-transparent border-b border-black/[0.08] py-5 text-xl text-secondary focus:border-accent outline-none font-sans font-light tracking-tight transition-all"
+                  placeholder="e.g. Theoretical Ethics"
                   value={newSubject}
                   onChange={e => setNewSubject(e.target.value)}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-600 uppercase">Exam Date</label>
-                <div className="relative">
-                  <input 
-                    type="date"
-                    className="w-full bg-white border-2 border-slate-300 rounded-2xl p-4 text-secondary focus:border-accent outline-none cursor-pointer"
-                    value={newExamDate}
-                    onChange={e => setNewExamDate(e.target.value)}
-                  />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-accent">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                  </div>
-                </div>
+              <div className="space-y-3">
+                <label className="text-[8px] font-black text-slate uppercase tracking-[0.4em] ml-1">Critical Deadline</label>
+                <input 
+                  type="date"
+                  className="w-full bg-transparent border-b border-black/[0.08] py-5 text-xl text-secondary focus:border-accent outline-none cursor-pointer font-sans font-light tracking-tight transition-all"
+                  value={newExamDate}
+                  onChange={e => setNewExamDate(e.target.value)}
+                />
               </div>
             </div>
             <button 
               onClick={addSubjectAndExam}
-              className="group w-full py-5 bg-slate-100 text-secondary rounded-2xl hover:bg-accent hover:text-white transition-all font-bold uppercase tracking-widest text-xs flex items-center justify-center space-x-2 active:scale-95"
+              className="w-full py-6 border border-black/10 text-secondary hover:border-accent hover:text-accent transition-all duration-700 font-black uppercase tracking-[0.4em] text-[9px] flex items-center justify-center space-x-4 group"
             >
-              <span>Add Exam Entry</span>
-              <svg className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+              <span>Add to Ledger</span>
+              <svg className="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
             </button>
-            <div className="flex justify-between items-center pt-8 border-t border-slate-100">
-              <button onClick={onBack} className="text-slate-400 font-bold hover:text-secondary">Back</button>
-              <button disabled={exams.length === 0} onClick={() => setStep(2)} className="px-12 py-4 bg-accent text-white rounded-2xl font-bold shadow-lg shadow-indigo-200">Continue</button>
+            <div className="flex justify-between items-center pt-12 border-t border-black/[0.05]">
+              <button onClick={onBack} className="text-slate/40 text-[8px] font-bold uppercase tracking-luxury hover:text-secondary transition-colors">Abort Sync</button>
+              <button disabled={exams.length === 0} onClick={() => setStep(2)} className="px-16 py-5 bg-accent text-white rounded-[2px] font-black uppercase tracking-[0.4em] text-[9px] disabled:opacity-20 transition-all hover:bg-black shadow-lg shadow-accent/10">Proceed to Elements</button>
             </div>
           </div>
         )}
 
         {step === 2 && (
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-secondary">Syllabus Breakdown</h3>
-            <div className="h-[460px] overflow-y-auto space-y-6 pr-4">
+          <div className="space-y-12 animate-fade-in-up">
+            <div className="space-y-2">
+              <h3 className="text-3xl font-serif text-secondary italic font-light">Neural Units</h3>
+              <p className="text-slate text-[9px] uppercase tracking-luxury opacity-50">Deconstruct subjects into precise cognitive study topics.</p>
+            </div>
+            
+            <div className="max-h-[450px] overflow-y-auto space-y-8 pr-4 scroll-hide">
               {subjects.map(sub => (
-                <div key={sub.id} className="p-6 border-2 border-slate-200 rounded-3xl bg-white shadow-sm">
-                  <h4 className="font-bold text-secondary mb-4">{sub.name}</h4>
-                  <div className="flex flex-wrap gap-2 mb-4">
+                <div key={sub.id} className="p-10 bg-black/[0.02] border border-black/[0.04] rounded-sm">
+                  <h4 className="font-serif italic text-2xl text-accent mb-8">{sub.name}</h4>
+                  <div className="flex flex-wrap gap-3 mb-10">
                     {sub.topics.map(t => (
-                      <span key={t.id} className="px-3 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-600">{t.name}</span>
+                      <span key={t.id} className="px-5 py-1.5 bg-white border border-black/[0.08] rounded-full text-[8px] font-black text-slate uppercase tracking-widest">{t.name}</span>
                     ))}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-4">
                     <input 
-                      className="flex-grow bg-white border-2 border-slate-200 rounded-xl p-3 text-sm focus:border-accent outline-none"
-                      placeholder="Enter Topic..."
+                      className="flex-grow bg-transparent border-b border-black/[0.08] py-3 text-md focus:border-accent outline-none transition-all font-sans font-light tracking-tight"
+                      placeholder="Specify Operational Topic..."
                       value={topicInputs[sub.id] || ''}
                       onChange={e => handleTopicInputChange(sub.id, e.target.value)}
                     />
-                    <button onClick={() => addTopicToSubject(sub.id)} className="px-6 py-3 bg-secondary text-white rounded-xl text-xs font-bold hover:bg-accent transition-all">Add</button>
+                    <button onClick={() => addTopicToSubject(sub.id)} className="px-10 py-3 bg-accent text-white text-[8px] font-black uppercase tracking-luxury hover:bg-black transition-all">Add</button>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="flex justify-between items-center pt-8 border-t border-slate-100">
-              <button onClick={() => setStep(1)} className="text-slate-400 font-bold hover:text-secondary">Back</button>
-              <button onClick={() => setStep(3)} className="px-12 py-4 bg-accent text-white rounded-2xl font-bold shadow-lg shadow-indigo-200">Next</button>
+            <div className="flex justify-between items-center pt-12 border-t border-black/[0.05]">
+              <button onClick={() => setStep(1)} className="text-slate/40 text-[8px] font-bold uppercase tracking-luxury">Back to Registry</button>
+              <button onClick={() => setStep(3)} className="px-16 py-5 bg-accent text-white rounded-[2px] font-black uppercase tracking-[0.4em] text-[9px] shadow-lg shadow-accent/10">Set Parameters</button>
             </div>
           </div>
         )}
 
         {step === 3 && (
-          <div className="space-y-8">
-            <h3 className="text-2xl font-bold text-secondary">Final Settings</h3>
-            <div className="space-y-10">
-              <div className="flex justify-between items-center">
-                <span className="text-secondary font-bold uppercase tracking-widest text-xs">Daily Available Hours</span>
-                <span className="text-accent font-bold text-2xl">{prefs.dailyHours}h</span>
-              </div>
-              <input type="range" min="1" max="12" step="0.5" className="w-full h-2 bg-slate-200 rounded-full appearance-none accent-accent" value={prefs.dailyHours} onChange={e => setPrefs({...prefs, dailyHours: parseFloat(e.target.value)})} />
+          <div className="space-y-16 animate-fade-in-up">
+             <div className="space-y-2 text-center">
+              <h3 className="text-3xl font-serif text-secondary italic font-light">Architectural Config</h3>
+              <p className="text-slate text-[9px] uppercase tracking-[0.6em] opacity-50">Calibrate the temporal density and operational style.</p>
             </div>
-            <div className="flex justify-between items-center pt-10 border-t border-slate-100">
-              <button onClick={() => setStep(2)} className="text-slate-400 font-bold hover:text-secondary">Back</button>
-              <button onClick={() => onComplete(exams, subjects, prefs)} className="px-12 py-5 bg-secondary text-white rounded-[2rem] font-bold hover:bg-accent shadow-2xl transition-all active:scale-95">Generate Path</button>
+            
+            <div className="max-md mx-auto space-y-16">
+              <div className="space-y-8">
+                <div className="flex justify-between items-end mb-2">
+                  <span className="text-slate/50 font-bold uppercase tracking-[0.5em] text-[8px]">Daily Budget</span>
+                  <span className="text-accent font-light text-5xl italic tracking-tighter">{prefs.dailyHours}h</span>
+                </div>
+                <input type="range" min="1" max="12" step="0.5" className="w-full h-[2px] bg-black/[0.08] appearance-none accent-accent cursor-pointer" value={prefs.dailyHours} onChange={e => setPrefs({...prefs, dailyHours: parseFloat(e.target.value)})} />
+              </div>
+              
+              <div className="space-y-4">
+                <label className="text-[8px] font-black text-slate/50 uppercase tracking-[0.5em] block">Operational Protocol</label>
+                <select className="w-full bg-transparent border-b border-black/[0.08] py-4 text-lg font-sans font-light tracking-tight text-secondary outline-none cursor-pointer focus:border-accent">
+                  <option value="balanced">Balanced Synergy</option>
+                  <option value="revision-first">Deep Retention</option>
+                  <option value="sprint">Efficiency Sprint</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center pt-16 border-t border-black/[0.05]">
+              <button onClick={() => setStep(2)} className="text-slate/40 text-[8px] font-bold uppercase tracking-luxury">Return to Units</button>
+              <button onClick={() => onComplete(exams, subjects, prefs)} className="px-24 py-7 bg-accent text-white rounded-[2px] font-black uppercase tracking-[0.5em] text-[10px] shadow-2xl shadow-accent/20 hover:bg-black transition-all">Generate Blueprint</button>
             </div>
           </div>
         )}
